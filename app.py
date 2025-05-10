@@ -1,4 +1,4 @@
-from flask import Flask,render_template,redirect, request,url_for
+from flask import Flask,render_template,redirect, request,url_for,render_template_string
 from flask_pymongo import PyMongo
 import os
 import hashlib
@@ -55,8 +55,11 @@ def url_to_shortlink():
 def redirect_to(short_code):
     original_url=request.base_url
     data=mongo.db.links.find_one({'short_code':short_code})
-    original_url=data['original_url']
-    return redirect(original_url)
-
+    if data:
+        original_url=data.get('original_url',None)
+        return redirect(original_url)
+    else:
+        return render_template_string('Url Not Found')
+    
 if __name__ == '__main__':
     app.run(debug=True)
