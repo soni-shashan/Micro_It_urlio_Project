@@ -1,14 +1,20 @@
-from flask import Flask,render_template,redirect, request,url_for,render_template_string
+from flask import Flask,render_template,redirect, request,render_template_string,session,url_for
 from flask_pymongo import PyMongo
+import requests
 import os
 import hashlib
 from datetime import datetime
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app=Flask(__name__)
 app.config['SECRET_KEY']=os.urandom(24)
+app.config["MONGO_URI"] = os.getenv('MONGO_URI')
 
-app.config["MONGO_URI"] = "mongodb+srv://SHASHAN_LUMBHANI:ERt5Hk7Lu6u9GiNb@tpc.0cuhjqj.mongodb.net/linkly?retryWrites=true&w=majority"
+GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET=os.getenv('GOOGLE_CLIENT_SECRET')
+REDIRECT_URI=os.getenv('REDIRECT_URI')
 
 mongo=PyMongo(app)
 
@@ -20,7 +26,38 @@ def hash_slug(url, length=6):
 
 @app.route('/')
 def index():
+    if 'user' not in session:
+        return redirect(url_for('login'))
     return render_template('index.html')
+
+@app.route('/login')
+def login():
+    return redirect(f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope=email profile')
+
+@app.route('/callback')
+def callback():
+    code = request.args.get('code')
+    token_response = requests.post('https://oauth2.googleapis.com/token', data={
+        'code': code,
+        'client_id': GOOGLE_CLIENT_ID,
+        'client_secret': GOOGLE_CLIENT_SECRET,
+        'redirect_uri': REDIRECT_URI,
+        'grant_type': 'authorization_code'
+    })
+    token_json = token_response.json()
+    access_token = token_json.get('access_token')
+    user_info_response = requests.get('https://www.googleapis.com/oauth2/v2/userinfo', headers={
+        'Authorization': f'Bearer {access_token}'
+    })
+    user_info = user_info_response.json()
+    session['user'] = {
+        'uid': user_info['id'],
+        'email': user_info['email'],
+        'displayName': user_info['name'],
+        'profilePic': user_info['picture']
+    }
+    return redirect(url_for('index'))
+    
 
 @app.route('/shorten',methods=['POST'])
 def url_to_shortlink():
