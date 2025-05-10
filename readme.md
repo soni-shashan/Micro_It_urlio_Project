@@ -2,10 +2,10 @@
 Urlio is a micro URL shortener web application built using Python and Flask. It allows users to shorten long URLs and manage them efficiently. The application integrates with MongoDB for data storage and supports Google OAuth 2.0 for user authentication.
 
 ## Features
-- URL Shortening: Convert long URLs into concise, shareable links.
-- User Authentication: Secure login using Google OAuth 2.0.
-- URL Management: Track and manage your shortened URLs.
-- Responsive Design: User-friendly interface accessible across devices.
+- **URL Shortening:** Convert long URLs into concise, shareable links.
+- **User Authentication:** Secure login using Google OAuth 2.0.
+- **URL Management:** Track and manage your shortened URLs.
+- **Responsive Design:** User-friendly interface accessible across devices.
 
 ## Demo
 Check out the live application here: https://urlio.vercel.app/

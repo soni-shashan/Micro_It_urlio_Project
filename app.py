@@ -117,15 +117,16 @@ def url_to_shortlink():
             }
         user_data=mongo.db.users.find_one({'uid':session['user']['uid']})
         links=user_data['links']
-        links.append(short_code)
-        mongo.db.users.update_one(
-            {'uid':session['user']['uid']},
-            {
-                '$set': {
-                    'links':links
+        if short_code not in links:
+            links.append(short_code)
+            mongo.db.users.update_one(
+                {'uid':session['user']['uid']},
+                {
+                    '$set': {
+                        'links':links
+                    }
                 }
-            }
-        )
+            )
         if not existing:
             mongo.db.links.insert_one(data)
             return render_template('index.html',short_url=short_url,original_url=original_url,user=user)
