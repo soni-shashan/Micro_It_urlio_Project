@@ -27,12 +27,18 @@ def hash_slug(url, length=6):
 @app.route('/')
 def index():
     user=None
+    matched_links=None
     if 'user' in session:
         user={
             'profile_picture':session['user']['profilePic'],
             'name':session['user']['displayName']
         }
-    return render_template('index.html',user=user)
+        user_data=mongo.db.users.find_one({'uid':session['user']['uid']})
+        if user_data:
+            links = user_data['links']
+            matched_links = list(mongo.db.links.find({'short_code': {'$in': links}}))
+
+    return render_template('index.html',user=user,urls_history=matched_links)
 
 @app.route('/login')
 def login():
@@ -65,6 +71,10 @@ def callback():
         'displayName': user_info['name'],
         'profilePic': user_info['picture']
     }
+    existing=mongo.db.users.find_one({'uid':session['user']['uid']})
+    if not existing:
+        session['user']['links']=[]
+        mongo.db.users.insert_one(session['user'])
     return redirect(url_for('index'))
     
 
@@ -98,12 +108,24 @@ def url_to_shortlink():
                 {'short_code': short_code}
             ]
         })
+
         user=None
         if 'user' in session:
             user={
                 'profile_picture':session['user']['profilePic'],
                 'name':session['user']['displayName']
             }
+        user_data=mongo.db.users.find_one({'uid':session['user']['uid']})
+        links=user_data['links']
+        links.append(short_code)
+        mongo.db.users.update_one(
+            {'uid':session['user']['uid']},
+            {
+                '$set': {
+                    'links':links
+                }
+            }
+        )
         if not existing:
             mongo.db.links.insert_one(data)
             return render_template('index.html',short_url=short_url,original_url=original_url,user=user)
@@ -111,6 +133,7 @@ def url_to_shortlink():
             return render_template('index.html',short_url=existing['short_url'],original_url=existing['original_url'],user=user)
     else:
         return redirect(url_for('index'))
+    
 @app.route('/<short_code>')
 def redirect_to(short_code):
     if short_code == 'shorten':

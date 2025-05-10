@@ -67,6 +67,37 @@
         </div>
         {% endif %}
         
+        {% if user %}
+        <div class="history-section">
+            <h2><i class="fas fa-history"></i> Your URL History</h2>
+            <div class="history-list">
+                {% if urls_history and urls_history|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Original URL</th>
+                            <th>Short URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for url in urls_history %}
+                        <tr>
+                            <td class="original-url">{{ url.original_url|truncate(40) }}</td>
+                            <td>
+                                <input type="text" class="short-url-input" value="{{ url.short_url }}" readonly size="15">
+                                <button onclick="copyHistoryUrl(this)" class="copy-history-btn"><i class="fas fa-copy"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="no-history">You haven't shortened any URLs yet.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
         <div class="footer">
             <p>© 2025 Urlio - Make your links shorter</p>
         </div>
@@ -85,6 +116,21 @@
             
             setTimeout(() => {
                 copyBtn.innerHTML = originalText;
+            }, 2000);
+        }
+        
+        function copyHistoryUrl(button) {
+            // Find the input field next to this button
+            var inputField = button.previousElementSibling;
+            inputField.select();
+            document.execCommand("copy");
+            
+            // Show feedback
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
             }, 2000);
         }
     </script>

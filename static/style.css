@@ -298,3 +298,111 @@ tr:hover {
         font-size: 2rem;
     }
 }
+
+/* History Section Styles */
+.history-section {
+    margin-top: 40px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.history-section h2 {
+    color: #3498db;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.short-url-input {
+    border: 1px solid #eaeaea;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.copy-history-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 5px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-history-btn:hover {
+    background-color: #2980b9;
+}
+
+.delete-btn {
+    color: #e74c3c;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.delete-btn:hover {
+    background-color: #fde2e2;
+}
+
+.no-history {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Make table responsive */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+    }
+    
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+    
+    td:before {
+        position: absolute;
+        top: 12px;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        content: attr(data-label);
+    }
+    
+    td:nth-of-type(1):before { content: "Original URL"; }
+    td:nth-of-type(2):before { content: "Short URL"; }
+    td:nth-of-type(3):before { content: "Created"; }
+    td:nth-of-type(4):before { content: "Clicks"; }
+    td:nth-of-type(5):before { content: "Actions"; }
+}
