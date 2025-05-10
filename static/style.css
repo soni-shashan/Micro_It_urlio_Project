@@ -5,26 +5,41 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background-color: #f9f9f9;
+    background-color: #f0f2f5;
     padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
     background-color: white;
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #2c3e50;
+    font-size: 2.5rem;
+    color: #3498db;
+    margin-bottom: 5px;
+}
+
+.tagline {
+    color: #7f8c8d;
+    font-size: 1rem;
 }
 
 h2 {
@@ -42,31 +57,40 @@ input[type="text"] {
     flex: 1;
     padding: 12px 15px;
     border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
+    border-radius: 6px 0 0 6px;
     font-size: 16px;
+    font-family: 'Poppins', sans-serif;
 }
 
-button {
+.shorten-btn {
     background-color: #3498db;
     color: white;
     border: none;
     padding: 12px 20px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
     font-size: 16px;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 6px 6px 0;
+    font-weight: 500;
 }
 
-button:hover {
+.shorten-btn:hover {
     background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .result {
     margin-top: 30px;
     background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 4px;
+    padding: 25px;
+    border-radius: 8px;
     border-left: 4px solid #3498db;
+    transition: all 0.3s ease;
+}
+
+.result:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .url-display {
@@ -76,7 +100,28 @@ button:hover {
 
 .url-display input {
     flex: 1;
-    border-radius: 4px 0 0 4px;
+    border-radius: 6px 0 0 6px;
+    font-size: 16px;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.copy-btn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    border-radius: 0 6px 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.copy-btn:hover {
+    background-color: #219653;
 }
 
 .original-url {
@@ -87,24 +132,106 @@ button:hover {
 .alert {
     background-color: #f8d7da;
     color: #721c24;
-    padding: 12px;
+    padding: 15px;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border-radius: 6px;
     text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .footer {
     margin-top: 30px;
     text-align: center;
+    color: #95a5a6;
+    font-size: 0.9rem;
 }
 
-.footer a {
-    color: #3498db;
+.auth-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+/* Google Login Button */
+.google-btn {
+    width: 220px;
+    height: 42px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
     text-decoration: none;
+    transition: all 0.2s ease;
 }
 
-.footer a:hover {
-    text-decoration: underline;
+.google-btn:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.google-btn:active {
+    background-color: #eee;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transform: translateY(1px);
+}
+
+.google-icon-wrapper {
+    width: 40px;
+    height: 42px;
+    border-radius: 6px 0 0 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.google-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-text {
+    color: #757575;
+    font-size: 14px;
+    padding-left: 15px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* User profile when logged in */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
 }
 
 .history-list {
@@ -133,17 +260,25 @@ tr:hover {
 }
 
 @media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 20px;
+    }
+    
     .input-group {
         flex-direction: column;
     }
     
     .input-group input {
-        border-radius: 4px;
+        border-radius: 6px;
         margin-bottom: 10px;
     }
     
-    .input-group button {
-        border-radius: 4px;
+    .shorten-btn {
+        border-radius: 6px;
     }
     
     .url-display {
@@ -151,11 +286,15 @@ tr:hover {
     }
     
     .url-display input {
-        border-radius: 4px;
+        border-radius: 6px;
         margin-bottom: 10px;
     }
     
-    .url-display button {
-        border-radius: 4px;
+    .copy-btn {
+        border-radius: 6px;
+    }
+    
+    h1 {
+        font-size: 2rem;
     }
 }

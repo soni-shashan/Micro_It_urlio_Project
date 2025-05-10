@@ -1,4 +1,4 @@
-from flask import Flask,render_template,redirect, request,render_template_string,session,url_for
+from flask import Flask,render_template,redirect, request,render_template_string,session,url_for,flash
 from flask_pymongo import PyMongo
 import requests
 import os
@@ -26,13 +26,22 @@ def hash_slug(url, length=6):
 
 @app.route('/')
 def index():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    return render_template('index.html')
+    user=None
+    if 'user' in session:
+        user={
+            'profile_picture':session['user']['profilePic'],
+            'name':session['user']['displayName']
+        }
+    return render_template('index.html',user=user)
 
 @app.route('/login')
 def login():
     return redirect(f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope=email profile')
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('index'))
 
 @app.route('/callback')
 def callback():
@@ -61,35 +70,51 @@ def callback():
 
 @app.route('/shorten',methods=['POST'])
 def url_to_shortlink():
-    original_url = request.form.get('url')
+    if 'user' not in session:
+        flash('you need to login for create short url!')
+        return redirect(request.referrer)
+    if request.method == 'POST':
+        original_url = request.form.get('url')
 
-    if not original_url.startswith(('http://', 'https://')):
-        original_url = 'https://' + original_url
+        if not original_url.startswith(('http://', 'https://')):
+            original_url = 'https://' + original_url
 
-    short_code = hash_slug(original_url)
-    short_url = request.base_url.replace('shorten','') + short_code
+        short_code = hash_slug(original_url)
+        short_url = request.base_url.replace('shorten','') + short_code
 
-    data={
-        'original_url':original_url,
-        'short_url':short_url,
-        'short_code':short_code,
-        'createdAt':datetime.now().strftime('%d-%m-%Y %I:%M:%S %p')
-    }
+        data={
+            'original_url':original_url,
+            'short_url':short_url,
+            'short_code':short_code,
+            'createdAt':datetime.now().strftime('%d-%m-%Y %I:%M:%S %p'),
+            'uid':session['user']['uid'],
+            'name':session['user']['displayName'],
+            'email':session['user']['email']
+        }
 
-    existing = mongo.db.links.find_one({
-        '$or': [
-            {'original_url': original_url},
-            {'short_code': short_code}
-        ]
-    })
-    if not existing:
-        mongo.db.links.insert_one(data)
-        return render_template('index.html',short_url=short_url,original_url=original_url)
+        existing = mongo.db.links.find_one({
+            '$or': [
+                {'original_url': original_url},
+                {'short_code': short_code}
+            ]
+        })
+        user=None
+        if 'user' in session:
+            user={
+                'profile_picture':session['user']['profilePic'],
+                'name':session['user']['displayName']
+            }
+        if not existing:
+            mongo.db.links.insert_one(data)
+            return render_template('index.html',short_url=short_url,original_url=original_url,user=user)
+        else:
+            return render_template('index.html',short_url=existing['short_url'],original_url=existing['original_url'],user=user)
     else:
-        return render_template('index.html',short_url=existing['short_url'],original_url=existing['original_url'])
-
+        return redirect(url_for('index'))
 @app.route('/<short_code>')
 def redirect_to(short_code):
+    if short_code == 'shorten':
+        return redirect(url_for('index'))
     original_url=request.base_url
     data=mongo.db.links.find_one({'short_code':short_code})
     if data:
